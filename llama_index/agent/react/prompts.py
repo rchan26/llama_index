@@ -24,9 +24,9 @@ To answer the question, please use the following format.
 ```
 Thought: I need to use a tool to help me answer the question.
 Action: tool name (one of {tool_names})
-Action Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{"text": "hello world", "num_beams": 5}})
+Action Input: the input to the tool, in a JSON format representing the kwargs (e.g. {{"input": "hello world"}})
 ```
-Please use a valid JSON format for the action input. Do NOT do this {{'text': 'hello world', 'num_beams': 5}}.
+Please use a valid JSON format for the action input. Do NOT do this {{'input': 'hello world'}}.
 
 If this format is used, the user will respond in the following format:
 
