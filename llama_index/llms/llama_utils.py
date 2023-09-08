@@ -34,7 +34,7 @@ def messages_to_prompt(
             if i == 0:
                 # first message needs system message
                 string_messages.append(
-                    f"{BOS} {B_INST} {system_message_str} {user_message.content} {E_INST} {assistant_message}"
+                    f"{BOS} {B_INST} {system_message_str} {user_message.content} {E_INST} {assistant_message} "
                 )
             else:
                 string_messages[-1] += f" {EOS}"
@@ -46,12 +46,13 @@ def messages_to_prompt(
             if i == 0:
                 # first message needs system message
                 string_messages.append(
-                    f"{BOS} {B_INST} {system_message_str} {user_message.content} {E_INST}"
+                    f"{BOS} {B_INST} {system_message_str} {user_message.content} {E_INST} "
                 )
             else:
                 string_messages[-1] += f" {EOS}"
-                string_messages.append(f"{BOS} {B_INST} {user_message.content} {E_INST}")
+                string_messages.append(f"{BOS} {B_INST} {user_message.content} {E_INST} ")
 
+    print("".join(string_messages))
     return "".join(string_messages)
 
 
