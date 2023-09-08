@@ -26,40 +26,31 @@ def messages_to_prompt(
 
     system_message_str = f"{B_SYS} {system_message_str} {E_SYS}"
 
-    for i, (user_message, assistant_message) in enumerate(
-        zip(messages[::2], messages[1::2])
-    ):
+    for i, user_message in enumerate(messages[::2]):
         assert user_message.role == MessageRole.USER
-        assert assistant_message.role == MessageRole.ASSISTANT
+        try: # for completed interactions
+            assistant_message = messages[2*i+1]
+            assert assistant_message.role == MessageRole.ASSISTANT
+            if i == 0:
+                # first message needs system message
+                string_messages.append(
+                    f"{BOS} {B_INST} {system_message_str} {user_message.content} {E_INST} {assistant_message}"
+                )
+            else:
+                string_messages[-1] += f" {EOS}"
+                string_messages.append(
+                        f"{BOS} {B_INST} {user_message.content} {E_INST} {assistant_message} "
+                    )
 
-        if i == 0:
-            # first message already has the system message
-            # add on the user message and assistant message
-            string_messages.append(
-                f"{BOS} {B_INST} {system_message_str} "
-                f"{user_message.content} {E_INST} {assistant_message} "
-            )
-        else:
-            # end the previous message and add a new one
-            string_messages[-1] += f" {EOS}"
-            string_messages.append(
-                f"{BOS} {B_INST} {user_message.content} {E_INST} {assistant_message}"
-            )
-            
-    if len(string_messages) == 0:
-        # we didn't enter the loop before as only had one message,
-        # system_message_str has not been added yet
-        user_message = messages[-1]
-        assert user_message.role == MessageRole.USER
-        string_messages.append(
-            f"{BOS} {B_INST} {system_message_str} "
-            f"{user_message.content} {E_INST}"
-        )
-    else:    
-        # add the last user message
-        last_message = messages[-1]
-        assert last_message.role == MessageRole.USER
-        string_messages.append(f"{B_INST} {last_message.content} {E_INST}")
+        except IndexError: #for uncompleted interactions
+            if i == 0:
+                # first message needs system message
+                string_messages.append(
+                    f"{BOS} {B_INST} {system_message_str} {user_message.content} {E_INST}"
+                )
+            else:
+                string_messages[-1] += f" {EOS}"
+                string_messages.append(f"{BOS} {B_INST} {user_message.content} {E_INST}")
 
     return "".join(string_messages)
 
